@@ -22,12 +22,27 @@ public class TeleportTrapScript : MonoBehaviour {
         }
 
         if (enemy.gameObject.CompareTag("Player") || enemy.gameObject.CompareTag("AI")) {
-            
-            //************************
-            //*** Need to work on ****
-            //************************
 
-            Debug.Log("Adversary Teleported!");
+            Vector3[] spawnPlacesArray = {
+                //top half
+                new Vector3(-17,0,15),
+                new Vector3(-9,0,15),
+                new Vector3(-1,0,15),
+                new Vector3(7,0,15),
+                new Vector3(15,0,15),
+                //bottom half
+                new Vector3(-15,0,-15),
+                new Vector3(-7,0,-15),
+                new Vector3(1,0,-15), 
+                new Vector3(9,0,-15),
+                new Vector3(17,0,-15),
+            };
+
+            int teleportTo = Random.Range(0, 10);
+
+            enemy.gameObject.GetComponent<Transform>().SetPositionAndRotation(spawnPlacesArray[teleportTo], Quaternion.identity);
+
+            
         }
 
         
@@ -39,31 +54,28 @@ public class TeleportTrapScript : MonoBehaviour {
         while (radius < 55f) {
             listOfObjects = Physics.OverlapSphere(center, radius, layerMask);
             radius++;
-            if (listOfObjects.Length >= 2) break;
+            if (listOfObjects.Length >= 3) break;
         }
 
         
         Collider closestCollider = listOfObjects[0];
         for(int i = 0; i < listOfObjects.Length; i++) {
-                
-            float dist1 = Vector3.Distance(center, closestCollider.bounds.center);
-            float dist2 = Vector3.Distance(center, listOfObjects[i].bounds.center);
-                
+            if (!listOfObjects[i].gameObject.CompareTag(user)) {
+                float dist1 = Vector3.Distance(center, closestCollider.bounds.center);
+                float dist2 = Vector3.Distance(center, listOfObjects[i].bounds.center);
 
-            if(dist1 > dist2 || closestCollider.CompareTag(user)) {
-                closestCollider = listOfObjects[i];
+
+                if (dist1 > dist2 || closestCollider.gameObject.CompareTag(user)) {
+                    closestCollider = listOfObjects[i];
+                }
+
             }
 
         }
 
         return closestCollider;
        
-
-
-
-    
-
-
+        
 
     }
 	
